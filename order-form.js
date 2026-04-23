@@ -2,6 +2,23 @@
   var mount = document.querySelector('[data-form-mount]');
   if(!mount) return;
 
+  // Strip styling from Webflow wrapper containers
+  var p = mount.parentElement;
+  var depth = 0;
+  while(p && p.tagName !== 'BODY' && depth < 6){
+    p.style.maxWidth = 'none';
+    p.style.width = '100%';
+    p.style.background = 'transparent';
+    p.style.backgroundColor = 'transparent';
+    p.style.boxShadow = 'none';
+    p.style.border = 'none';
+    p.style.borderRadius = '0';
+    p.style.padding = '0';
+    p.style.margin = '0 auto';
+    p = p.parentElement;
+    depth++;
+  }
+
   var PRICES = {
     freight: { under:140, over:251, packaging:50 }
   };
