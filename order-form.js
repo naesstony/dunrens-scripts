@@ -1,0 +1,359 @@
+(function(){
+  var mount = document.querySelector('[data-form-mount]');
+  if(!mount) return;
+
+  var PRICES = {
+    freight: { under:140, over:251, packaging:50 }
+  };
+
+  var PRODUCTS = [
+    { section: 'Dyner', items: [
+      { id:'d-baby',            label:'Babydyne',    size:'65×80',                         price:580  },
+      { id:'d-barne-80',        label:'Barnedyne',   size:'80×100',                        price:660  },
+      { id:'d-barne-100',       label:'Barnedyne',   size:'100×140',                       price:750  },
+      { id:'d-enkel-140-200-v', label:'Enkeltdyne',  size:'140×200 — Vinterdyne',          price:1400 },
+      { id:'d-enkel-140-200-s', label:'Enkeltdyne',  size:'140×200 — Sommerdyne',          price:1800 },
+      { id:'d-enkel-140-220-v', label:'Enkeltdyne',  size:'140×220 — Vinterdyne',          price:1400 },
+      { id:'d-enkel-140-220-s', label:'Enkeltdyne',  size:'140×220 — Sommerdyne',          price:1800 },
+      { id:'d-enkel-140-250-v', label:'Enkeltdyne',  size:'140×250 — Vinterdyne',          price:1600 },
+      { id:'d-enkel-140-250-s', label:'Enkeltdyne',  size:'140×250 — Sommerdyne',          price:1800 },
+      { id:'d-dobbel-200-v',    label:'Dobbeltdyne', size:'200×220 — Vinterdyne',          price:2000 },
+      { id:'d-dobbel-200-s',    label:'Dobbeltdyne', size:'200×220 — Sommerdyne',          price:2500 },
+      { id:'d-dobbel-240-v',    label:'Dobbeltdyne', size:'240×220 — Vinterdyne',          price:2600 },
+      { id:'d-dobbel-240-s',    label:'Dobbeltdyne', size:'240×220 — Sommerdyne',          price:2800 }
+    ]},
+    { section: 'Puter', items: [
+      { id:'p-5070',  label:'Pute', size:'50×70 (std)',  price:420 },
+      { id:'p-6080',  label:'Pute', size:'60×80',        price:480 },
+      { id:'p-4060',  label:'Pute', size:'40×60',        price:415 },
+      { id:'p-70100', label:'Pute', size:'70×100',       price:720 },
+      { id:'p-8080',  label:'Pute', size:'80×80',        price:635 },
+      { id:'p-4550',  label:'Pute', size:'45×50',        price:345 },
+      { id:'p-3540',  label:'Pute', size:'35×40 (baby)', price:310 }
+    ]},
+    { section: 'Tilleggstjenester', items: [
+      { id:'t-etterfyll-dyne',  label:'Rens av dun i dyne for bruk som etterfyll',      size:'Per dyne',       price:420 },
+      { id:'t-etterfyll-barne', label:'Rens av dun i barnedyne for bruk som etterfyll', size:'Per barnedyne',  price:210 }
+    ]}
+  ];
+
+  var state = {
+    step: 1,
+    quantities: {},
+    sameBack: true,
+    returnQuantities: {},
+    contactMe: false,
+    customer: {}
+  };
+  PRODUCTS.forEach(function(s){ s.items.forEach(function(it){ state.quantities[it.id]=0; state.returnQuantities[it.id]=0; }); });
+
+  function fmt(n){ return n.toLocaleString('nb-NO'); }
+  function totalItems(q){ var n=0; for(var k in q){ n+=q[k]; } return n; }
+
+  function calcTotal(){
+    var items = state.sameBack ? state.quantities : state.returnQuantities;
+    if(state.contactMe) return { lines:[], total:0, count:0 };
+    var lines=[], total=0, count=0;
+    PRODUCTS.forEach(function(s){
+      s.items.forEach(function(it){
+        var q = items[it.id] || 0;
+        if(q>0){
+          var sub = it.price * q;
+          lines.push({ label: q+' × '+it.label+' '+it.size, price: sub });
+          total += sub; count += q;
+        }
+      });
+    });
+    var heavy = count > 2;
+    var fIn  = heavy ? PRICES.freight.over : PRICES.freight.under;
+    var fOut = heavy ? PRICES.freight.over : PRICES.freight.under;
+    lines.push({ label:'Frakt inn (est.)',  price:fIn });
+    lines.push({ label:'Frakt ut (est.)',   price:fOut });
+    lines.push({ label:'Emballasje',        price:PRICES.freight.packaging });
+    total += fIn + fOut + PRICES.freight.packaging;
+    return { lines:lines, total:total, count:count };
+  }
+
+  function renderProductRow(it, dir){
+    var q = (dir==='i' ? state.quantities : state.returnQuantities)[it.id];
+    return ''
+      + '<div class="dr-row" data-row="'+dir+'-'+it.id+'">'
+      +   '<div class="dr-row-info">'
+      +     '<div class="dr-row-label">'+it.label+'</div>'
+      +     '<div class="dr-row-size">'+it.size+'</div>'
+      +   '</div>'
+      +   '<div class="dr-row-price">'+fmt(it.price)+' kr</div>'
+      +   '<div class="dr-counter">'
+      +     '<button class="dr-btn" data-action="dec" data-id="'+it.id+'" data-dir="'+dir+'">−</button>'
+      +     '<span class="dr-qty" data-qty="'+dir+'-'+it.id+'">'+q+'</span>'
+      +     '<button class="dr-btn" data-action="inc" data-id="'+it.id+'" data-dir="'+dir+'">+</button>'
+      +   '</div>'
+      + '</div>';
+  }
+
+  function renderSection(s, dir){
+    var rows = s.items.map(function(it){ return renderProductRow(it, dir); }).join('');
+    return '<div class="dr-section"><h3 class="dr-section-title">'+s.section+'</h3>'+rows+'</div>';
+  }
+
+  function renderStep1(){
+    var grid = PRODUCTS.map(function(s){ return renderSection(s,'i'); }).join('');
+    return ''
+      + '<div class="dr-step" data-step="1">'
+      +   '<div class="dr-card">'
+      +     '<h2 class="dr-heading">Hva sender du inn?</h2>'
+      +     '<p class="dr-sub">Velg produktene du ønsker renset og nytt trekk på. Prisene er estimater — endelig pris settes etter vurdering.</p>'
+      +     grid
+      +     '<div class="dr-info">Hvert oppdrag inkluderer alltid rens av dun og nytt trekk. Størrelsen kan endres uten ekstra kostnad.</div>'
+      +   '</div>'
+      + '</div>';
+  }
+
+  function renderStep2(){
+    var grid = PRODUCTS.map(function(s){ return renderSection(s,'u'); }).join('');
+    return ''
+      + '<div class="dr-step" data-step="2" style="display:none">'
+      +   '<div class="dr-card">'
+      +     '<h2 class="dr-heading">Hva ønsker du tilbake?</h2>'
+      +     '<p class="dr-sub">Antallet trenger ikke matche det du sender inn.</p>'
+      +     '<div class="dr-options">'
+      +       '<label class="dr-opt"><input type="radio" name="oc" value="same" checked><span><strong>Samme som jeg sender inn</strong></span></label>'
+      +       '<label class="dr-opt"><input type="radio" name="oc" value="custom"><span><strong>Noe annet</strong> — jeg velger selv</span></label>'
+      +       '<label class="dr-opt"><input type="radio" name="oc" value="contact"><span><strong>Kontakt meg</strong> — vi ringer og avklarer</span></label>'
+      +     '</div>'
+      +     '<div class="dr-return" data-return style="display:none">'+grid+'</div>'
+      +   '</div>'
+      + '</div>';
+  }
+
+  function renderStep3(){
+    return ''
+      + '<div class="dr-step" data-step="3" style="display:none">'
+      +   '<div class="dr-card">'
+      +     '<h2 class="dr-heading">Dine opplysninger</h2>'
+      +     '<p class="dr-sub">Vi bruker dette for å kontakte deg og sende pakken tilbake.</p>'
+      +     '<div class="dr-form">'
+      +       '<input type="text"  name="navn"    placeholder="Navn" />'
+      +       '<input type="email" name="epost"   placeholder="E-post" />'
+      +       '<input type="tel"   name="telefon" placeholder="Telefon" />'
+      +       '<input type="text"  name="adresse" placeholder="Adresse" />'
+      +       '<div class="dr-form-row">'
+      +         '<input type="text" name="postnr" placeholder="Postnr" style="width:140px" />'
+      +         '<input type="text" name="sted"   placeholder="Sted" style="flex:1" />'
+      +       '</div>'
+      +     '</div>'
+      +     '<div class="dr-notice">'
+      +       '<div class="dr-notice-title">Viktig å vite</div>'
+      +       '<p>1. Dunet kan trenge etterfyll — prisen kan bli noe høyere<br>'
+      +       '2. Tilstanden kan gjøre at dynen kun egner seg til puter<br>'
+      +       '3. I sjeldne tilfeller kan oppdraget ikke gjennomføres</p>'
+      +       '<p class="dr-notice-strong">Vi vurderer innholdet før vi fastsetter endelig pris. Du betaler først etter at du har godkjent prisen — ingen overraskelser.</p>'
+      +     '</div>'
+      +     '<label class="dr-check"><input type="checkbox" name="forbehold"><span>Jeg har lest og forstått forbeholdene</span></label>'
+      +   '</div>'
+      + '</div>';
+  }
+
+  function renderSidebar(){
+    var calc = calcTotal();
+    var html = '<div class="dr-summary-card">';
+    html += '<div class="dr-summary-title">Din bestilling</div>';
+
+    if(state.contactMe){
+      html += '<div class="dr-summary-note">Vi ringer deg når pakken er mottatt og anbefaler hva som passer best.</div>';
+    } else if(calc.count === 0){
+      html += '<div class="dr-summary-empty">Ingen produkter lagt til enda.</div>';
+    } else {
+      html += '<div class="dr-summary-lines">';
+      calc.lines.forEach(function(l){
+        html += '<div class="dr-summary-line"><span>'+l.label+'</span><span>'+fmt(l.price)+' kr</span></div>';
+      });
+      html += '</div>';
+      html += '<div class="dr-summary-total"><span>Estimert totalpris</span><span>'+fmt(calc.total)+' kr</span></div>';
+      html += '<div class="dr-summary-hint">Endelig pris settes etter vurdering. Du betaler ingenting før du har godkjent.</div>';
+    }
+
+    html += '<div class="dr-summary-nav">';
+    if(state.step < 3){
+      html += '<button class="dr-nav-next" data-nav="next">Neste steg →</button>';
+    } else {
+      html += '<button class="dr-nav-submit" data-nav="submit">Bekreft bestilling</button>';
+    }
+    if(state.step > 1){
+      html += '<button class="dr-nav-back" data-nav="prev">← Tilbake</button>';
+    }
+    html += '</div>';
+
+    html += '</div>';
+    return html;
+  }
+
+  function updateSidebars(){
+    var sb = document.querySelector('[data-sidebar-root]');
+    if(sb) sb.innerHTML = renderSidebar();
+  }
+
+  function updateQty(id, dir){
+    var q = (dir==='i' ? state.quantities : state.returnQuantities)[id];
+    var el = mount.querySelector('[data-qty="'+dir+'-'+id+'"]');
+    if(el) el.textContent = q;
+  }
+
+  function go(n){
+    if(n<1||n>3) return;
+    state.step = n;
+    mount.querySelectorAll('[data-step]').forEach(function(el){
+      el.style.display = el.getAttribute('data-step')==String(n) ? 'block' : 'none';
+    });
+    updateSidebars();
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  mount.innerHTML = ''
+    + '<style>'
+    + '[data-form-mount]{font-family:inherit;color:#1a1a2e}'
+    + '.dr-layout{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:32px;align-items:start;max-width:1100px;margin:0 auto}'
+    + '@media(max-width:900px){.dr-layout{grid-template-columns:1fr}}'
+    + '.dr-main{min-width:0}'
+    + '.dr-card{background:#fff;border:1px solid #e8e4dd;border-radius:12px;padding:32px}'
+    + '.dr-heading{font-size:26px;font-weight:700;margin:0 0 8px;color:#1a1a2e}'
+    + '.dr-sub{font-size:15px;color:#4a4a5a;margin:0 0 24px;line-height:1.6}'
+    + '.dr-section{margin-bottom:28px}'
+    + '.dr-section:last-child{margin-bottom:0}'
+    + '.dr-section-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#6a6a7a;margin:0 0 12px;padding-bottom:8px;border-bottom:1px solid #e8e4dd}'
+    + '.dr-row{display:grid;grid-template-columns:1fr auto auto;gap:20px;align-items:center;padding:14px 0;border-bottom:1px solid #f0ece6}'
+    + '.dr-row:last-child{border-bottom:none}'
+    + '.dr-row-label{font-size:15px;font-weight:500;color:#1a1a2e;line-height:1.3}'
+    + '.dr-row-size{font-size:13px;color:#6a6a7a;margin-top:2px}'
+    + '.dr-row-price{font-size:15px;font-weight:500;color:#1a1a2e;min-width:80px;text-align:right;white-space:nowrap}'
+    + '.dr-counter{display:flex;align-items:center;gap:8px}'
+    + '.dr-btn{width:30px;height:30px;border-radius:6px;border:1px solid #d9d4cb;background:#fff;font-size:16px;font-weight:600;cursor:pointer;color:#1a1a2e;display:flex;align-items:center;justify-content:center;transition:all 0.15s;padding:0}'
+    + '.dr-btn:hover{background:#f8f6f3;border-color:#2d5f3f}'
+    + '.dr-qty{font-size:15px;font-weight:600;min-width:22px;text-align:center}'
+    + '.dr-info{background:#f8f6f3;border-radius:8px;padding:14px 18px;font-size:13px;color:#4a4a5a;margin-top:24px;line-height:1.6}'
+    + '.dr-sidebar{position:sticky;top:24px}'
+    + '.dr-summary-card{background:#fff;border:1px solid #e8e4dd;border-radius:12px;padding:24px;box-shadow:0 1px 3px rgba(0,0,0,0.04)}'
+    + '.dr-summary-title{font-size:16px;font-weight:700;margin-bottom:16px;color:#1a1a2e}'
+    + '.dr-summary-empty{font-size:14px;color:#6a6a7a;padding:8px 0 16px}'
+    + '.dr-summary-note{font-size:14px;color:#4a4a5a;padding:8px 0 16px;line-height:1.5}'
+    + '.dr-summary-lines{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid #e8e4dd}'
+    + '.dr-summary-line{display:flex;justify-content:space-between;gap:12px;font-size:13px;color:#4a4a5a;line-height:1.4}'
+    + '.dr-summary-line span:last-child{font-weight:500;color:#1a1a2e;white-space:nowrap}'
+    + '.dr-summary-total{display:flex;justify-content:space-between;font-size:16px;font-weight:700;color:#1a1a2e;padding-bottom:4px}'
+    + '.dr-summary-hint{font-size:12px;color:#6a6a7a;line-height:1.5;margin-top:12px;padding-top:12px;border-top:1px solid #e8e4dd}'
+    + '.dr-summary-nav{display:flex;flex-direction:column;gap:8px;margin-top:20px}'
+    + '.dr-nav-next,.dr-nav-submit{background:#2d5f3f;color:#fff;padding:12px 20px;border-radius:8px;font-size:15px;font-weight:600;border:none;cursor:pointer;width:100%}'
+    + '.dr-nav-next:hover,.dr-nav-submit:hover{background:#254d33}'
+    + '.dr-nav-back{background:transparent;color:#4a4a5a;padding:10px 20px;border-radius:8px;font-size:14px;font-weight:500;border:1px solid #d9d4cb;cursor:pointer;width:100%}'
+    + '.dr-nav-back:hover{background:#f8f6f3}'
+    + '.dr-options{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}'
+    + '.dr-opt{display:flex;align-items:center;gap:12px;padding:14px 16px;border:1px solid #d9d4cb;border-radius:8px;cursor:pointer;background:#fff;transition:all 0.15s}'
+    + '.dr-opt:hover{border-color:#2d5f3f}'
+    + '.dr-opt input{accent-color:#2d5f3f;width:18px;height:18px;margin:0}'
+    + '.dr-opt span{font-size:15px;color:#1a1a2e}'
+    + '.dr-form{display:flex;flex-direction:column;gap:12px;margin-bottom:24px}'
+    + '.dr-form input{padding:13px 16px;border:1px solid #d9d4cb;border-radius:8px;font-size:15px;font-family:inherit;color:#1a1a2e}'
+    + '.dr-form input:focus{outline:none;border-color:#2d5f3f}'
+    + '.dr-form-row{display:flex;gap:12px}'
+    + '.dr-notice{background:#f8f6f3;border-radius:12px;padding:20px 24px;margin-bottom:20px}'
+    + '.dr-notice-title{font-size:16px;font-weight:600;margin-bottom:10px}'
+    + '.dr-notice p{font-size:14px;color:#4a4a5a;line-height:1.7;margin:0 0 10px}'
+    + '.dr-notice-strong{font-weight:600;color:#1a1a2e;margin-top:12px!important}'
+    + '.dr-check{display:flex;align-items:center;gap:10px;cursor:pointer}'
+    + '.dr-check input{accent-color:#2d5f3f;width:18px;height:18px}'
+    + '.dr-check span{font-size:14px;color:#4a4a5a}'
+    + '</style>'
+    + '<div class="dr-layout">'
+    +   '<div class="dr-main">'
+    +     renderStep1()
+    +     renderStep2()
+    +     renderStep3()
+    +   '</div>'
+    +   '<aside class="dr-sidebar" data-sidebar-root></aside>'
+    + '</div>';
+
+  updateSidebars();
+
+  mount.addEventListener('click', function(e){
+    var btn = e.target.closest('[data-action]');
+    if(btn){
+      var id = btn.dataset.id;
+      var dir = btn.dataset.dir;
+      var bucket = dir==='i' ? state.quantities : state.returnQuantities;
+      bucket[id] = Math.max(0, bucket[id] + (btn.dataset.action==='inc' ? 1 : -1));
+      updateQty(id, dir);
+      updateSidebars();
+      return;
+    }
+    var nav = e.target.closest('[data-nav]');
+    if(nav){
+      var a = nav.dataset.nav;
+      if(a==='next'){
+        if(state.step===1 && totalItems(state.quantities)===0){
+          alert('Legg til minst ett produkt for å gå videre.');
+          return;
+        }
+        go(state.step+1);
+      }
+      if(a==='prev') go(state.step-1);
+      if(a==='submit') doSubmit();
+    }
+  });
+
+  mount.addEventListener('change', function(e){
+    var r = e.target.closest('input[name="oc"]');
+    if(r){
+      state.sameBack = r.value==='same';
+      state.contactMe = r.value==='contact';
+      var rt = mount.querySelector('[data-return]');
+      if(rt) rt.style.display = r.value==='custom' ? 'block' : 'none';
+      if(r.value==='same'){
+        for(var k in state.quantities){ state.returnQuantities[k] = state.quantities[k]; }
+      }
+      updateSidebars();
+    }
+  });
+
+  function doSubmit(){
+    var forbehold = mount.querySelector('[name="forbehold"]');
+    if(!forbehold || !forbehold.checked){ alert('Du må bekrefte at du har lest forbeholdene.'); return; }
+    var navn = mount.querySelector('[name="navn"]').value.trim();
+    var epost = mount.querySelector('[name="epost"]').value.trim();
+    var telefon = mount.querySelector('[name="telefon"]').value.trim();
+    var adresse = mount.querySelector('[name="adresse"]').value.trim();
+    var postnr = mount.querySelector('[name="postnr"]').value.trim();
+    var sted = mount.querySelector('[name="sted"]').value.trim();
+    if(!navn||!epost||!telefon||!adresse||!postnr||!sted){ alert('Fyll ut alle feltene.'); return; }
+
+    var inputList=[], outputList=[];
+    PRODUCTS.forEach(function(s){
+      s.items.forEach(function(it){
+        if(state.quantities[it.id]>0) inputList.push(state.quantities[it.id]+'x '+it.label+' '+it.size);
+        if(state.returnQuantities[it.id]>0) outputList.push(state.returnQuantities[it.id]+'x '+it.label+' '+it.size);
+      });
+    });
+
+    var calc = calcTotal();
+    var btn = mount.querySelector('[data-nav="submit"]');
+    if(btn){ btn.textContent='Sender...'; btn.disabled=true; }
+
+    fetch('https://hook.eu1.make.com/sgitxxj5vy787dc7j4oalpdofcvazx92', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        navn: navn, epost: epost, telefon: telefon,
+        adresse: adresse, postnr: postnr, sted: sted,
+        produkter_inn: inputList.join(', '),
+        oensket_output: state.contactMe ? 'Kontakt meg når pakken er mottatt' : outputList.join(', '),
+        kontakt_meg: state.contactMe,
+        estimert_pris: calc.total
+      })
+    }).then(function(){ window.location.href='/takk'; })
+      .catch(function(){
+        alert('Noe gikk galt. Prøv igjen.');
+        if(btn){ btn.textContent='Bekreft bestilling'; btn.disabled=false; }
+      });
+  }
+
+  go(1);
+})();
