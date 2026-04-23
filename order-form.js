@@ -211,8 +211,8 @@
 
   mount.innerHTML = ''
     + '<style>'
-    + '[data-form-mount]{font-family:inherit;color:#1a1a2e}'
-    + '.dr-layout{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:32px;align-items:start;max-width:1100px;margin:0 auto}'
+    + '[data-form-mount]{font-family:inherit;color:#1a1a2e;position:relative;width:100vw;left:50%;right:50%;margin-left:-50vw;margin-right:-50vw;padding:0 24px;box-sizing:border-box}'
+    + '.dr-layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:32px;align-items:start;max-width:1100px;margin:0 auto}'
     + '@media(max-width:900px){.dr-layout{grid-template-columns:1fr}}'
     + '.dr-main{min-width:0}'
     + '.dr-card{background:#fff;border:1px solid #e8e4dd;border-radius:12px;padding:32px}'
