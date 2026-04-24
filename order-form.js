@@ -48,7 +48,7 @@
       { id:'p-4550',  label:'Pute', size:'45×50',        price:345 },
       { id:'p-3540',  label:'Pute', size:'35×40 (baby)', price:310 }
     ]},
-    { section: 'Tilleggstjenester', items: [
+    { section: 'Tilleggstjenester', collapsible:true, defaultOpen:true, items: [
       { id:'t-etterfyll-dyne',  label:'Rens av dun i dyne for bruk som etterfyll',      size:'Per dyne',       price:420 },
       { id:'t-etterfyll-barne', label:'Rens av dun i barnedyne for bruk som etterfyll', size:'Per barnedyne',  price:210 }
     ]}
@@ -122,13 +122,16 @@
     }
     var selected = countSelected(s, dir);
     var badge = selected>0 ? '<span class="dr-section-badge">'+selected+' valgt</span>' : '';
+    var open = !!s.defaultOpen;
+    var openClass = open ? ' is-open' : '';
+    var bodyStyle = open ? '' : 'display:none';
     return ''
-      + '<div class="dr-section dr-section-collapsible" data-section="'+dir+'-'+s.section+'">'
+      + '<div class="dr-section dr-section-collapsible'+openClass+'" data-section="'+dir+'-'+s.section+'">'
       +   '<button type="button" class="dr-section-toggle" data-toggle="'+dir+'-'+s.section+'">'
       +     '<span class="dr-section-title-row"><span class="dr-section-title">'+s.section+'</span>'+badge+'</span>'
       +     '<span class="dr-section-chevron">›</span>'
       +   '</button>'
-      +   '<div class="dr-section-body" data-body="'+dir+'-'+s.section+'" style="display:none">'+rows+'</div>'
+      +   '<div class="dr-section-body" data-body="'+dir+'-'+s.section+'" style="'+bodyStyle+'">'+rows+'</div>'
       + '</div>';
   }
 
