@@ -265,6 +265,12 @@
     mount.querySelectorAll('[data-step]').forEach(function(el){
       el.style.display = el.getAttribute('data-step')==String(n) ? 'block' : 'none';
     });
+    // Update Webflow progress indicator dots (outside mount)
+    document.querySelectorAll('[data-step-dot]').forEach(function(d){
+      var dotN = parseInt(d.getAttribute('data-step-dot'),10);
+      if(dotN<=n){ d.classList.add('progress-dot-active'); }
+      else { d.classList.remove('progress-dot-active'); }
+    });
     updateSidebars();
     window.scrollTo({top:0, behavior:'smooth'});
   }
