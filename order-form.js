@@ -24,7 +24,7 @@
   };
 
   var PRODUCTS = [
-    { section: 'Dyner', items: [
+    { section: 'Dyner', collapsible:true, items: [
       { id:'d-baby',            label:'Babydyne',    size:'65×80',                         price:580  },
       { id:'d-barne-80',        label:'Barnedyne',   size:'80×100',                        price:660  },
       { id:'d-barne-100',       label:'Barnedyne',   size:'100×140',                       price:750  },
@@ -39,7 +39,7 @@
       { id:'d-dobbel-240-v',    label:'Dobbeltdyne', size:'240×220 — Vinterdyne',          price:2600 },
       { id:'d-dobbel-240-s',    label:'Dobbeltdyne', size:'240×220 — Sommerdyne',          price:2800 }
     ]},
-    { section: 'Puter', items: [
+    { section: 'Puter', collapsible:true, items: [
       { id:'p-5070',  label:'Pute', size:'50×70 (std)',  price:420 },
       { id:'p-6080',  label:'Pute', size:'60×80',        price:480 },
       { id:'p-4060',  label:'Pute', size:'40×60',        price:415 },
@@ -108,9 +108,28 @@
       + '</div>';
   }
 
+  function countSelected(s, dir){
+    var bucket = dir==='i' ? state.quantities : state.returnQuantities;
+    var n = 0;
+    s.items.forEach(function(it){ n += bucket[it.id] || 0; });
+    return n;
+  }
+
   function renderSection(s, dir){
     var rows = s.items.map(function(it){ return renderProductRow(it, dir); }).join('');
-    return '<div class="dr-section"><h3 class="dr-section-title">'+s.section+'</h3>'+rows+'</div>';
+    if(!s.collapsible){
+      return '<div class="dr-section"><h3 class="dr-section-title">'+s.section+'</h3>'+rows+'</div>';
+    }
+    var selected = countSelected(s, dir);
+    var badge = selected>0 ? '<span class="dr-section-badge">'+selected+' valgt</span>' : '';
+    return ''
+      + '<div class="dr-section dr-section-collapsible" data-section="'+dir+'-'+s.section+'">'
+      +   '<button type="button" class="dr-section-toggle" data-toggle="'+dir+'-'+s.section+'">'
+      +     '<span class="dr-section-title-row"><span class="dr-section-title">'+s.section+'</span>'+badge+'</span>'
+      +     '<span class="dr-section-chevron">›</span>'
+      +   '</button>'
+      +   '<div class="dr-section-body" data-body="'+dir+'-'+s.section+'" style="display:none">'+rows+'</div>'
+      + '</div>';
   }
 
   function renderStep1(){
@@ -214,6 +233,27 @@
     var q = (dir==='i' ? state.quantities : state.returnQuantities)[id];
     var el = mount.querySelector('[data-qty="'+dir+'-'+id+'"]');
     if(el) el.textContent = q;
+    // Update section badges for collapsible sections
+    PRODUCTS.forEach(function(s){
+      if(!s.collapsible) return;
+      var sec = mount.querySelector('[data-section="'+dir+'-'+s.section+'"]');
+      if(!sec) return;
+      var toggle = sec.querySelector('.dr-section-title-row');
+      if(!toggle) return;
+      var existing = toggle.querySelector('.dr-section-badge');
+      var n = countSelected(s, dir);
+      if(n>0){
+        if(existing){ existing.textContent = n+' valgt'; }
+        else {
+          var badge = document.createElement('span');
+          badge.className = 'dr-section-badge';
+          badge.textContent = n+' valgt';
+          toggle.appendChild(badge);
+        }
+      } else if(existing){
+        existing.remove();
+      }
+    });
   }
 
   function go(n){
@@ -240,6 +280,16 @@
     + '.dr-section{margin-bottom:48px}'
     + '.dr-section:last-child{margin-bottom:0}'
     + '.dr-section-title{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.12em;color:#9ca3af;margin:0 0 20px}'
+    + '.dr-section-collapsible{border-top:1px solid #f3f0ea;margin-bottom:0;padding:0}'
+    + '.dr-section-collapsible:last-of-type{border-bottom:1px solid #f3f0ea}'
+    + '.dr-section-toggle{display:flex;align-items:center;justify-content:space-between;width:100%;padding:24px 0;background:transparent;border:none;cursor:pointer;font-family:inherit;text-align:left;transition:all 0.15s}'
+    + '.dr-section-toggle:hover{opacity:0.7}'
+    + '.dr-section-title-row{display:flex;align-items:center;gap:12px}'
+    + '.dr-section-collapsible .dr-section-title{margin:0;font-size:15px;font-weight:600;color:#0f1419;text-transform:none;letter-spacing:-0.01em}'
+    + '.dr-section-badge{font-size:12px;font-weight:500;color:#1a4d2e;background:#e8f0ec;padding:4px 10px;border-radius:999px;letter-spacing:0;text-transform:none}'
+    + '.dr-section-chevron{font-size:24px;color:#9ca3af;transform:rotate(90deg);transition:transform 0.25s ease;line-height:1;font-weight:300}'
+    + '.dr-section-collapsible.is-open .dr-section-chevron{transform:rotate(-90deg)}'
+    + '.dr-section-body{padding-bottom:8px}'
     + '.dr-row{display:grid;grid-template-columns:1fr auto auto;gap:24px;align-items:center;padding:18px 0;border-bottom:1px solid #f3f0ea}'
     + '.dr-row:last-child{border-bottom:none}'
     + '.dr-row-label{font-size:16px;font-weight:500;color:#0f1419;line-height:1.3;letter-spacing:-0.01em}'
@@ -297,6 +347,18 @@
   updateSidebars();
 
   mount.addEventListener('click', function(e){
+    var tog = e.target.closest('[data-toggle]');
+    if(tog){
+      var key = tog.dataset.toggle;
+      var body = mount.querySelector('[data-body="'+key+'"]');
+      var sec  = mount.querySelector('[data-section="'+key+'"]');
+      if(body && sec){
+        var isOpen = sec.classList.contains('is-open');
+        if(isOpen){ body.style.display='none'; sec.classList.remove('is-open'); }
+        else { body.style.display='block'; sec.classList.add('is-open'); }
+      }
+      return;
+    }
     var btn = e.target.closest('[data-action]');
     if(btn){
       var id = btn.dataset.id;
