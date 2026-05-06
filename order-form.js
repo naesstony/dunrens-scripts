@@ -76,8 +76,8 @@
   function totalItems(q){ var n=0; for(var k in q){ n+=q[k]; } return n; }
 
   function calcTotal(){
-    var items = state.sameBack ? state.quantities : state.returnQuantities;
-    if(state.contactMe) return { lines:[], total:0, count:0 };
+    // Use input quantities when "same" or "contact me" — both show estimate based on what is sent in
+    var items = (state.sameBack || state.contactMe) ? state.quantities : state.returnQuantities;
     var lines=[], total=0, count=0;
     PRODUCTS.forEach(function(s){
       s.items.forEach(function(it){
@@ -203,9 +203,7 @@
     var html = '<div class="dr-summary-card">';
     html += '<div class="dr-summary-title">Din bestilling</div>';
 
-    if(state.contactMe){
-      html += '<div class="dr-summary-note">Vi ringer deg når pakken er mottatt og anbefaler hva som passer best.</div>';
-    } else if(calc.count === 0){
+    if(calc.count === 0){
       html += '<div class="dr-summary-empty">Ingen produkter lagt til enda.</div>';
     } else {
       html += '<div class="dr-summary-lines">';
@@ -214,7 +212,11 @@
       });
       html += '</div>';
       html += '<div class="dr-summary-total"><span>Estimert totalpris</span><span>'+fmt(calc.total)+' kr</span></div>';
-      html += '<div class="dr-summary-hint">Endelig pris settes etter vurdering. Du betaler ingenting før du har godkjent.</div>';
+      if(state.contactMe){
+        html += '<div class="dr-summary-hint">Du har valgt at vi tar kontakt. Estimatet over er basert på det du sender inn — endelig pris settes etter vurdering.</div>';
+      } else {
+        html += '<div class="dr-summary-hint">Endelig pris settes etter vurdering. Du betaler ingenting før du har godkjent.</div>';
+      }
     }
 
     html += '<div class="dr-summary-nav">';
