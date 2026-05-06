@@ -157,18 +157,15 @@
   }
 
   function renderStep2(){
-    var grid = PRODUCTS.map(function(s){ return renderSection(s,'u'); }).join('');
     return ''
       + '<div class="dr-step" data-step="2" style="display:none">'
       +   '<div class="dr-card">'
       +     '<h2 class="dr-heading">Hva ønsker du tilbake?</h2>'
-      +     '<p class="dr-sub">Antallet trenger ikke matche det du sender inn.</p>'
+      +     '<p class="dr-sub">Velg det som passer best.</p>'
       +     '<div class="dr-options">'
       +       '<label class="dr-opt"><input type="radio" name="oc" value="same" checked><span><strong>Samme som jeg sender inn</strong></span></label>'
-      +       '<label class="dr-opt"><input type="radio" name="oc" value="custom"><span><strong>Noe annet</strong> — jeg velger selv</span></label>'
-      +       '<label class="dr-opt"><input type="radio" name="oc" value="contact"><span><strong>Kontakt meg</strong> — vi ringer og avklarer</span></label>'
+      +       '<label class="dr-opt"><input type="radio" name="oc" value="contact"><span><strong>Noe annet</strong> — vi kontakter deg når vi mottar dine produkter</span></label>'
       +     '</div>'
-      +     '<div class="dr-return" data-return style="display:none">'+grid+'</div>'
       +   '</div>'
       + '</div>';
   }
@@ -406,8 +403,6 @@
     if(r){
       state.sameBack = r.value==='same';
       state.contactMe = r.value==='contact';
-      var rt = mount.querySelector('[data-return]');
-      if(rt) rt.style.display = r.value==='custom' ? 'block' : 'none';
       if(r.value==='same'){
         for(var k in state.quantities){ state.returnQuantities[k] = state.quantities[k]; }
       }
