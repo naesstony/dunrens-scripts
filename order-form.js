@@ -47,10 +47,6 @@
       { id:'d-barne-80',        label:'Barnedyne',   size:'80×100',               price:660  },
       { id:'d-barne-100',       label:'Barnedyne',   size:'100×140',              price:750  }
     ]},
-    { section: 'Tilleggstjenester', collapsible:true, defaultOpen:true, items: [
-      { id:'t-etterfyll-dyne',  label:'Rens av dun i dyne for bruk som etterfyll',      size:'Per dyne',       price:420 },
-      { id:'t-etterfyll-barne', label:'Rens av dun i barnedyne for bruk som etterfyll', size:'Per barnedyne',  price:210 }
-    ]},
     { section: 'Puter', collapsible:true, items: [
       { id:'p-5070',  label:'Pute', size:'50×70 (std)',  price:420 },
       { id:'p-6080',  label:'Pute', size:'60×80',        price:480 },
@@ -59,6 +55,10 @@
       { id:'p-8080',  label:'Pute', size:'80×80',        price:635 },
       { id:'p-4550',  label:'Pute', size:'45×50',        price:345 },
       { id:'p-3540',  label:'Pute', size:'35×40 (baby)', price:310 }
+    ]},
+    { section: 'Tilleggstjenester', collapsible:true, defaultOpen:true, items: [
+      { id:'t-etterfyll-dyne',  label:'Rens av dun i dyne for bruk som etterfyll',      size:'Per dyne',       price:420 },
+      { id:'t-etterfyll-barne', label:'Rens av dun i barnedyne for bruk som etterfyll', size:'Per barnedyne',  price:210 }
     ]}
   ];
 
