@@ -25,19 +25,31 @@
 
   var PRODUCTS = [
     { section: 'Dyner', collapsible:true, items: [
-      { id:'d-baby',            label:'Babydyne',    size:'65×80',                         price:580  },
-      { id:'d-barne-80',        label:'Barnedyne',   size:'80×100',                        price:660  },
-      { id:'d-barne-100',       label:'Barnedyne',   size:'100×140',                       price:750  },
-      { id:'d-enkel-140-200-v', label:'Enkeltdyne',  size:'140×200 — Vinterdyne',          price:1400 },
-      { id:'d-enkel-140-200-s', label:'Enkeltdyne',  size:'140×200 — Sommerdyne',          price:1800 },
-      { id:'d-enkel-140-220-v', label:'Enkeltdyne',  size:'140×220 — Vinterdyne',          price:1400 },
-      { id:'d-enkel-140-220-s', label:'Enkeltdyne',  size:'140×220 — Sommerdyne',          price:1800 },
-      { id:'d-enkel-140-250-v', label:'Enkeltdyne',  size:'140×250 — Vinterdyne',          price:1600 },
-      { id:'d-enkel-140-250-s', label:'Enkeltdyne',  size:'140×250 — Sommerdyne',          price:1800 },
-      { id:'d-dobbel-200-v',    label:'Dobbeltdyne', size:'200×220 — Vinterdyne',          price:2000 },
-      { id:'d-dobbel-200-s',    label:'Dobbeltdyne', size:'200×220 — Sommerdyne',          price:2500 },
-      { id:'d-dobbel-240-v',    label:'Dobbeltdyne', size:'240×220 — Vinterdyne',          price:2600 },
-      { id:'d-dobbel-240-s',    label:'Dobbeltdyne', size:'240×220 — Sommerdyne',          price:2800 }
+      // Enkeltdyner — Sommer, Helårs, Vinter
+      { id:'d-enkel-140-200-s', label:'Enkeltdyne',  size:'140×200 — Sommerdyne', price:1800 },
+      { id:'d-enkel-140-200-h', label:'Enkeltdyne',  size:'140×200 — Helårsdyne', price:1400 },
+      { id:'d-enkel-140-200-v', label:'Enkeltdyne',  size:'140×200 — Vinterdyne', price:1400 },
+      { id:'d-enkel-140-220-s', label:'Enkeltdyne',  size:'140×220 — Sommerdyne', price:1800 },
+      { id:'d-enkel-140-220-h', label:'Enkeltdyne',  size:'140×220 — Helårsdyne', price:1400 },
+      { id:'d-enkel-140-220-v', label:'Enkeltdyne',  size:'140×220 — Vinterdyne', price:1400 },
+      { id:'d-enkel-140-250-s', label:'Enkeltdyne',  size:'140×250 — Sommerdyne', price:1800 },
+      { id:'d-enkel-140-250-h', label:'Enkeltdyne',  size:'140×250 — Helårsdyne', price:1600 },
+      { id:'d-enkel-140-250-v', label:'Enkeltdyne',  size:'140×250 — Vinterdyne', price:1600 },
+      // Dobbeltdyner — Sommer, Helårs, Vinter
+      { id:'d-dobbel-200-s',    label:'Dobbeltdyne', size:'200×220 — Sommerdyne', price:2500 },
+      { id:'d-dobbel-200-h',    label:'Dobbeltdyne', size:'200×220 — Helårsdyne', price:2000 },
+      { id:'d-dobbel-200-v',    label:'Dobbeltdyne', size:'200×220 — Vinterdyne', price:2000 },
+      { id:'d-dobbel-240-s',    label:'Dobbeltdyne', size:'240×220 — Sommerdyne', price:2800 },
+      { id:'d-dobbel-240-h',    label:'Dobbeltdyne', size:'240×220 — Helårsdyne', price:2600 },
+      { id:'d-dobbel-240-v',    label:'Dobbeltdyne', size:'240×220 — Vinterdyne', price:2600 },
+      // Barnedyner sist
+      { id:'d-baby',            label:'Babydyne',    size:'65×80',                price:580  },
+      { id:'d-barne-80',        label:'Barnedyne',   size:'80×100',               price:660  },
+      { id:'d-barne-100',       label:'Barnedyne',   size:'100×140',              price:750  }
+    ]},
+    { section: 'Tilleggstjenester', collapsible:true, defaultOpen:true, items: [
+      { id:'t-etterfyll-dyne',  label:'Rens av dun i dyne for bruk som etterfyll',      size:'Per dyne',       price:420 },
+      { id:'t-etterfyll-barne', label:'Rens av dun i barnedyne for bruk som etterfyll', size:'Per barnedyne',  price:210 }
     ]},
     { section: 'Puter', collapsible:true, items: [
       { id:'p-5070',  label:'Pute', size:'50×70 (std)',  price:420 },
@@ -47,10 +59,6 @@
       { id:'p-8080',  label:'Pute', size:'80×80',        price:635 },
       { id:'p-4550',  label:'Pute', size:'45×50',        price:345 },
       { id:'p-3540',  label:'Pute', size:'35×40 (baby)', price:310 }
-    ]},
-    { section: 'Tilleggstjenester', collapsible:true, defaultOpen:true, items: [
-      { id:'t-etterfyll-dyne',  label:'Rens av dun i dyne for bruk som etterfyll',      size:'Per dyne',       price:420 },
-      { id:'t-etterfyll-barne', label:'Rens av dun i barnedyne for bruk som etterfyll', size:'Per barnedyne',  price:210 }
     ]}
   ];
 
