@@ -151,7 +151,11 @@
       +     '<h2 class="dr-heading">Hva sender du inn?</h2>'
       +     '<p class="dr-sub">Velg produktene du ønsker renset og nytt trekk på. Prisene er estimater — endelig pris settes etter vurdering.</p>'
       +     grid
-      +     '<div class="dr-info">Hvert oppdrag inkluderer alltid rens av dun og nytt trekk. Størrelsen kan endres uten ekstra kostnad.</div>'
+      +     '<ul class="dr-info dr-info-list">'
+      +       '<li>Hvert oppdrag inkluderer alltid rens av dun og nytt trekk.</li>'
+      +       '<li>Størrelsen kan endres uten ekstra kostnad.</li>'
+      +       '<li>Vi renser ett og ett produkt av gangen — du får alltid <strong>dine egne</strong> dyner og puter tilbake, aldri noen andres.</li>'
+      +     '</ul>'
       +   '</div>'
       + '</div>';
   }
@@ -322,6 +326,10 @@
     + '.dr-btn:hover{background:#fff;box-shadow:0 1px 3px rgba(15,20,25,0.1)}'
     + '.dr-qty{font-size:15px;font-weight:600;min-width:24px;text-align:center;color:#0f1419}'
     + '.dr-info{background:#f6f3ed;border-radius:14px;padding:20px 24px;font-size:14px;color:#6b7280;margin-top:40px;line-height:1.6}'
+    + '.dr-info-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}'
+    + '.dr-info-list li{padding-left:22px;position:relative;line-height:1.5}'
+    + '.dr-info-list li::before{content:"•";position:absolute;left:6px;color:#1a4d2e;font-weight:700}'
+    + '.dr-info-list strong{color:#0f1419;font-weight:600}'
     + '.dr-sidebar{position:sticky;top:32px}'
     + '.dr-summary-card{background:#fff;border-radius:20px;padding:32px;box-shadow:0 1px 2px rgba(15,20,25,0.04),0 8px 24px rgba(15,20,25,0.04)}'
     + '.dr-summary-title{font-size:13px;font-weight:600;margin-bottom:24px;color:#9ca3af;text-transform:uppercase;letter-spacing:0.12em}'
