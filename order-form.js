@@ -27,20 +27,20 @@
     { section: 'Dyner', collapsible:true, items: [
       // Enkeltdyner — Sommer, Helårs, Vinter
       { id:'d-enkel-140-200-s', label:'Enkeltdyne',  size:'140×200 — Sommerdyne', price:1800 },
-      { id:'d-enkel-140-200-h', label:'Enkeltdyne',  size:'140×200 — Helårsdyne', price:1400 },
+      { id:'d-enkel-140-200-h', label:'Enkeltdyne',  size:'140×200 — Helårsdyne', price:1800 },
       { id:'d-enkel-140-200-v', label:'Enkeltdyne',  size:'140×200 — Vinterdyne', price:1400 },
       { id:'d-enkel-140-220-s', label:'Enkeltdyne',  size:'140×220 — Sommerdyne', price:1800 },
-      { id:'d-enkel-140-220-h', label:'Enkeltdyne',  size:'140×220 — Helårsdyne', price:1400 },
+      { id:'d-enkel-140-220-h', label:'Enkeltdyne',  size:'140×220 — Helårsdyne', price:1800 },
       { id:'d-enkel-140-220-v', label:'Enkeltdyne',  size:'140×220 — Vinterdyne', price:1400 },
       { id:'d-enkel-140-250-s', label:'Enkeltdyne',  size:'140×250 — Sommerdyne', price:1800 },
-      { id:'d-enkel-140-250-h', label:'Enkeltdyne',  size:'140×250 — Helårsdyne', price:1600 },
+      { id:'d-enkel-140-250-h', label:'Enkeltdyne',  size:'140×250 — Helårsdyne', price:1800 },
       { id:'d-enkel-140-250-v', label:'Enkeltdyne',  size:'140×250 — Vinterdyne', price:1600 },
       // Dobbeltdyner — Sommer, Helårs, Vinter
       { id:'d-dobbel-200-s',    label:'Dobbeltdyne', size:'200×220 — Sommerdyne', price:2500 },
-      { id:'d-dobbel-200-h',    label:'Dobbeltdyne', size:'200×220 — Helårsdyne', price:2000 },
+      { id:'d-dobbel-200-h',    label:'Dobbeltdyne', size:'200×220 — Helårsdyne', price:2500 },
       { id:'d-dobbel-200-v',    label:'Dobbeltdyne', size:'200×220 — Vinterdyne', price:2000 },
       { id:'d-dobbel-240-s',    label:'Dobbeltdyne', size:'240×220 — Sommerdyne', price:2800 },
-      { id:'d-dobbel-240-h',    label:'Dobbeltdyne', size:'240×220 — Helårsdyne', price:2600 },
+      { id:'d-dobbel-240-h',    label:'Dobbeltdyne', size:'240×220 — Helårsdyne', price:2800 },
       { id:'d-dobbel-240-v',    label:'Dobbeltdyne', size:'240×220 — Vinterdyne', price:2600 },
       // Barnedyner sist
       { id:'d-baby',            label:'Babydyne',    size:'65×80',                price:580  },
