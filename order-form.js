@@ -153,8 +153,7 @@
       +     '<p class="dr-sub">Velg produktene du ønsker renset og nytt trekk på. Prisene er estimater — endelig pris settes etter vurdering.</p>'
       +     grid
       +     '<ul class="dr-info dr-info-list">'
-      +       '<li>Hvert oppdrag inkluderer alltid rens av dun og nytt trekk.</li>'
-      +       '<li>Størrelsen kan endres uten ekstra kostnad.</li>'
+      +       '<li>Hvert oppdrag inkluderer alltid rens av dun og nytt trekk. Størrelse på det du sender inn kan endres, og dette kan du velge på neste side.</li>'
       +       '<li>Vi renser ett og ett produkt av gangen — du får alltid <strong>dine egne</strong> dyner og puter tilbake, aldri noen andres.</li>'
       +     '</ul>'
       +   '</div>'
