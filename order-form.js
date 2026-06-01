@@ -58,6 +58,7 @@
     ]},
     { section: 'Tilleggstjenester', collapsible:true, defaultOpen:true, items: [
       { id:'t-etterfyll-dyne',  label:'Rens av dun i dyne for bruk som etterfyll',      size:'Per dyne',       price:420 },
+      { id:'t-etterfyll-pute',  label:'Rens av dun i pute for bruk som etterfyll',      size:'Per pute',       price:110 },
       { id:'t-etterfyll-barne', label:'Rens av dun i barnedyne for bruk som etterfyll', size:'Per barnedyne',  price:210 }
     ]}
   ];
@@ -325,7 +326,7 @@
     + '.dr-btn{width:32px;height:32px;border-radius:999px;border:none;background:transparent;font-size:18px;font-weight:500;cursor:pointer;color:#0f1419;display:flex;align-items:center;justify-content:center;transition:all 0.2s;padding:0;line-height:1}'
     + '.dr-btn:hover{background:#fff;box-shadow:0 1px 3px rgba(15,20,25,0.1)}'
     + '.dr-qty{font-size:15px;font-weight:600;min-width:24px;text-align:center;color:#0f1419}'
-    + '.dr-info{background:#f6f3ed;border-radius:14px;padding:20px 24px;font-size:14px;color:#6b7280;margin-top:40px;line-height:1.6}'
+    + '.dr-info{background:#f6f3ed;border-radius:14px;padding:28px 28px;font-size:14px;color:#6b7280;margin-top:40px;line-height:1.6}'
     + '.dr-info-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}'
     + '.dr-info-list li{padding-left:22px;position:relative;line-height:1.5}'
     + '.dr-info-list li::before{content:"•";position:absolute;left:6px;color:#1a4d2e;font-weight:700}'
