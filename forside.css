@@ -590,3 +590,13 @@ button { font-family: inherit; }
   .dr-nav, .dr-right > a { display: none; }
   .dr-footer-grid { grid-template-columns: 1fr; }
 }
+
+/* Logo override — new red variant */
+.dr-logo-img {
+  background-image: url('https://cdn.jsdelivr.net/gh/naesstony/dunrens-scripts@main/images/logo-red.svg') !important;
+  width: 160px !important;
+  height: 78px !important;
+  background-size: contain !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+}
